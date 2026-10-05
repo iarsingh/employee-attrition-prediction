@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-attrition-prediction
+  labels:
+    app: employee-attrition-prediction
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employee-attrition-prediction
+  template:
+    metadata:
+      labels:
+        app: employee-attrition-prediction
+    spec:
+      containers:
+        - name: api
+          image: employee-attrition-prediction:local
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /v1/readyz
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: employee-attrition-prediction
+spec:
+  selector:
+    app: employee-attrition-prediction
+  ports:
+    - port: 80
+      targetPort: 8080
